@@ -6,9 +6,9 @@ class Game:
     def __init__(self):
         self.state = [
             [2, 2, 2, 2, 2, 2, 2, 2,
-             2, 2, 2, 2, 0, 0, 0, 0],
+             2, 2, 2, 0, 0, 0, 0, 0],
             [2, 2, 2, 2, 2, 2, 2, 2,
-             2, 2, 2, 2, 0, 0, 0, 0]]
+             2, 2, 2, 0, 0, 0, 0, 0]]
 
     def copy(self):
         copied_game = Game()
@@ -29,7 +29,7 @@ class Game:
                 current_player = 1 - current_player
 
                 # print(f"Round {current_round}:")
-                # print(self)
+                #print(self)
                 current_round += 1
 
         if self.player_has_won(0):
@@ -118,6 +118,24 @@ class Game:
                    {self.state[1][:8]}\
         """)
 
+    def print_player_perspective(self, player):
+        if(player==0):
+            print(dedent(f"""\
+                {list(reversed(self.state[1][:8]))}
+                {self.state[1][8:]}
+                -----------------------------------------
+                {list(reversed(self.state[0][8:]))}
+                {self.state[0][:8]}\
+            """))
+        else:
+            print(dedent(f"""\
+                {list(reversed(self.state[0][:8]))}
+                {self.state[0][8:]}
+                -----------------------------------------
+                {list(reversed(self.state[1][8:]))}
+                {self.state[1][:8]}\
+            """))
+
     def __hash__(self):
         return hash((tuple(self.state[0]), tuple(self.state[1])))
 
@@ -184,13 +202,35 @@ def high_bot(game, player):
 
     return max(((game.state[player][pos], pos) for pos in game.possible_moves(player)))[1]
 
+def real_player(game, player):
+    print()
+    print(f"Player {player} turn")
+    game.print_player_perspective(player)
+
+    move = -1
+    while(move==-1):
+        entered_move = input ("Enter move: ")
+
+        if(int(entered_move) in game.possible_moves(player)):
+            move = int(entered_move)
+        else:
+            print("Entered an invalid move")
+
+    print()
+    return move
+
+
+
 def trackGames():
     winner = [0,0]
 
     for i in range(1000):
         game = Game()
-        winner[game.bot_play(rand_bot, rand_bot)] += 1
+        winner[game.bot_play(high_bot, greedy_bot)] += 1
 
     print(winner)
-random.seed(2)
-trackGames()
+random.seed(1)
+#trackGames()
+
+game = Game()
+game.bot_play(real_player, real_player)
