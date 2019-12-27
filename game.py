@@ -155,7 +155,8 @@ def has_direct_winning_move(game, player):
     return None
 
 def first_bot(game, player) -> int:
-    if (pos := has_direct_winning_move(game, player)) is not None:
+    pos = has_direct_winning_move(game, player)
+    if pos is not None:
         return pos
 
     own_state = game.state[player]
@@ -178,7 +179,8 @@ def find_highest_value_move(game, player, compute_value):
     return best_move
 
 def distribute_bot(game, player):
-    if (pos := has_direct_winning_move(game, player)) is not None:
+    pos = has_direct_winning_move(game, player)
+    if pos is not None:
         return pos
 
     return find_highest_value_move(game, player, lambda game: game.used_fields_count(player))
@@ -187,7 +189,8 @@ def greedy_bot(game, player) -> int:
     return find_highest_value_move(game, player, lambda game: game.stone_count(player))
 
 def rand_bot(game, player) -> int:
-    if (pos := has_direct_winning_move(game, player)) is not None:
+    pos = has_direct_winning_move(game, player)
+    if pos is not None:
         return pos
 
     own_state = game.state[player]
@@ -197,7 +200,8 @@ def rand_bot(game, player) -> int:
     return random.choice(hasStones)
 
 def high_bot(game, player):
-    if (pos := has_direct_winning_move(game, player)) is not None:
+    pos = has_direct_winning_move(game, player)
+    if pos is not None:
         return pos
 
     return max(((game.state[player][pos], pos) for pos in game.possible_moves(player)))[1]
@@ -230,7 +234,4 @@ def trackGames():
 
     print(winner)
 random.seed(1)
-#trackGames()
-
-game = Game()
-game.bot_play(real_player, real_player)
+trackGames()
