@@ -2,6 +2,8 @@ from textwrap import dedent
 import time
 import random
 
+max_field_count = -1
+
 class Game:
     def __init__(self):
         self.state = [
@@ -99,6 +101,15 @@ class Game:
                 my_state[new_position] += stolen
 
             self.move_recursive(player, new_position)
+
+    def max_field_count(self, player):
+        global max_field_count
+
+        n = max(self.state[player])
+
+        if max_field_count < n:
+            max_field_count = n
+        return n
 
     def stone_count(self, player):
         return sum(self.state[player])
@@ -206,6 +217,14 @@ def high_bot(game, player):
 
     return max(((game.state[player][pos], pos) for pos in game.possible_moves(player)))[1]
 
+def max_in_one_field_bot(game, player):
+    pos = has_direct_winning_move(game, player)
+    if pos is not None:
+        return pos
+
+    return find_highest_value_move(game, player, lambda game: game.max_field_count(player))
+
+
 def real_player(game, player):
     print()
     print(f"Player {player} turn")
@@ -222,8 +241,6 @@ def real_player(game, player):
 
     print()
     return move
-
-
 
 def trackGames():
     winner = [0,0]
