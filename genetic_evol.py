@@ -1,61 +1,11 @@
 from game import *
 
-import os.path
 from datetime import datetime
-from os import path
-import json
-import uuid
 import copy
-import matplotlib.pyplot as plt
 
-class Individual:
-    def __init__(self, eval_board):
-        self.id = uuid.uuid4()
-        self.eval_board = eval_board
-        self.wins = 0
+from players.eval_board_bot import *
 
-    def won_game(self):
-        self.wins += 1
-
-    def reset_wins(self):
-        self.wins = 0
-
-    def calc_eval_board_value(self, game, player):
-        sum = 0
-        for i in range(2):
-            for j in range(16):
-                sum += game.state[player][j] * self.eval_board[i][j]
-
-        return sum
-
-    def eval_board_bot(self, game, player):
-        return find_highest_value_move(game, player, lambda game: self.calc_eval_board_value(game, player))
-
-    def load(self, sub_dir, number):
-        if not path.exists(f'generations/{sub_dir}/'):
-            raise IOError()
-
-        with open(f'generations/{sub_dir}/{number}.json', 'r', encoding='utf8') as file:
-            json_data = json.load(file)
-
-        self.id = uuid.UUID(json_data['id'])
-        self.eval_board = json_data['eval_board']
-        self.wins = 0
-
-    def save(self, sub_dir, number):
-        if(not path.exists(f'generations/{sub_dir}/')):
-            os.mkdir(f'generations/{sub_dir}/')
-
-        individual = {
-            'id': self.id.hex,
-            'eval_board': self.eval_board,
-            'wins': self.wins,
-        }
-
-        with open(f'generations/{sub_dir}/{number}.json', "w+", encoding='utf8') as write_file:
-            json.dump(individual, write_file)
-
-generation_size = 100
+generation_size = 2
 survivour_rate = 0.30
 
 num_of_games_per_player = 1
@@ -90,7 +40,7 @@ def init_first_gen():
     for _ in range(generation_size):
         eval_board = rand_eval_board()
 
-        individuals.append(Individual(rand_eval_board()))
+        individuals.append(EvalBoardBot(rand_eval_board()))
 
 def mutate(eval_board):
     for i in range(2):
@@ -118,7 +68,7 @@ def evolve():
             rand_individual_index = random.randint(0, survivour_num-1)
             rand_individual_eval_board = copy.deepcopy(individuals[rand_individual_index].eval_board)
 
-            individuals.append(Individual(mutate(rand_individual_eval_board)))
+            individuals.append(EvalBoardBot(mutate(rand_individual_eval_board)))
 
 def evolution(num_of_gen):
     global individuals
@@ -148,8 +98,4 @@ def evolution(num_of_gen):
         print(f'Time passed: {difference.seconds} seconds')
         print()
 
-#evolution(60)
-bestG60 = Individual([])
-bestG60.load('59_gen', '0')
-
-print(trackGames(1, bestG60.eval_board_bot, greedy_bot))
+evolution(60)
