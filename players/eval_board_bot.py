@@ -43,7 +43,7 @@ class EvalBoardBot(Player):
 
     def save(self, sub_dir, number):
         if(not path.exists(f'generations/{sub_dir}/')):
-            os.mkdir(f'generations/{sub_dir}/')
+            os.makedirs(f'generations/{sub_dir}/')
 
         individual = {
             'id': self.id.hex,
