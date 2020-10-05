@@ -219,6 +219,10 @@ def find_highest_value_move(game, player, compute_value):
         game_copy = game.copy()
         game_copy.move(player, pos)
 
+        # A move that results in a win is directly chosen as the highest value move
+        if game_copy.player_has_won(player):
+            return pos
+
         value = compute_value(game_copy)
         if highest_value is None or value > highest_value:
             highest_value = value
@@ -230,9 +234,6 @@ def distribute_bot(game, player):
     """
     This bot tries to distribute it's stones onto as many fields as possible
     """
-    pos = has_direct_winning_move(game, player)
-    if pos is not None:
-        return pos
 
     return find_highest_value_move(game, player, lambda game: game.used_fields_count(player))
 
@@ -272,9 +273,6 @@ def max_in_one_field_bot(game, player):
     """
     Tries to coolect as many stones in one field as possible.
     """
-    pos = has_direct_winning_move(game, player)
-    if pos is not None:
-        return pos
 
     return find_highest_value_move(game, player, lambda game: game.max_field_count(player))
 
@@ -322,4 +320,4 @@ def trackGamesRandStart(number_of_games, player1, player2):
         else:
             winner[1-game.play(player2, player1)] += 1
 
-    return winner 
+    return winner
