@@ -309,6 +309,17 @@ def trackGames(number_of_games, player1, player2):
         game = Game()
         winner[game.play(player1, player2)] += 1
 
-    print(winner)
-random.seed(1)
-trackGames(1000, rand_bot, greedy_bot)
+    return winner
+
+def trackGamesRandStart(number_of_games, player1, player2):
+    winner = [0,0]
+
+    for i in range(number_of_games):
+        game = Game()
+
+        if(random.choice([True, False])):
+            winner[game.play(player1, player2)] += 1
+        else:
+            winner[1-game.play(player2, player1)] += 1
+
+    return winner 
