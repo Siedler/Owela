@@ -27,7 +27,7 @@ class EvalBoardBot(Player):
 
         return sum
 
-    def eval_board_bot(self, game, player):
+    def select_move(self, game, player):
         return self.find_highest_value_move(game, player, lambda game: self.calc_eval_board_value(game, player))
 
     def load(self, sub_dir, number):

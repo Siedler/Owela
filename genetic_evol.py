@@ -5,7 +5,7 @@ import copy
 
 from players.eval_board_bot import *
 
-generation_size = 2
+generation_size = 100
 survivour_rate = 0.30
 
 num_of_games_per_player = 1
@@ -81,7 +81,7 @@ def evolution(num_of_gen):
         # turnement of all players
         for i in range(generation_size):
             for j in range(i+1, generation_size):
-                trackedGames = trackGamesRandStart(num_of_games_per_player, individuals[i].eval_board_bot, individuals[j].eval_board_bot)
+                trackedGames = trackGamesRandStart(num_of_games_per_player, individuals[i].select_move, individuals[j].select_move)
 
                 if(trackedGames[0] > trackedGames[1]):
                     individuals[i].won_game()
@@ -98,4 +98,4 @@ def evolution(num_of_gen):
         print(f'Time passed: {difference.seconds} seconds')
         print()
 
-evolution(60)
+evolution(10)

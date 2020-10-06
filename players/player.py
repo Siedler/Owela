@@ -41,4 +41,7 @@ class Player():
 
     # Abstract method
     def select_move(self, game, player) -> int:
+        """
+        Abstract function defining the behaviour of the player (wich move to play)
+        """
         pass
