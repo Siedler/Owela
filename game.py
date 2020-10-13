@@ -183,121 +183,6 @@ class Game:
         """
         return [i for i in range(16) if self.state[player][i] > 0]
 
-def has_direct_winning_move(game, player):
-    """
-    Calculates if a player has a move that would be a direct winning move.
-    """
-    own_state = game.state[player]
-    for pos in game.possible_moves(player):
-        game_copy = game.copy()
-        game_copy.move(player, pos)
-        if game_copy.player_has_won(player):
-            return pos
-    return None
-
-def first_bot(game, player) -> int:
-    """
-    If the bot has winning move: play it. Else play the first possible move
-    """
-    pos = has_direct_winning_move(game, player)
-    if pos is not None:
-        return pos
-
-    own_state = game.state[player]
-    return game.possible_moves(player)[0]
-
-def find_highest_value_move(game, player, compute_value):
-    """
-    This function is used to abstract the selection of a highest value move.
-    Given is the game (state), the current player and a function to determine
-    the best possible move (according to it's definition).
-    """
-    best_move = -1
-    highest_value = None
-
-    for pos in game.possible_moves(player):
-        game_copy = game.copy()
-        game_copy.move(player, pos)
-
-        value = compute_value(game_copy)
-        if highest_value is None or value > highest_value:
-            highest_value = value
-            best_move = pos
-
-    return best_move
-
-def distribute_bot(game, player):
-    """
-    This bot tries to distribute it's stones onto as many fields as possible
-    """
-    pos = has_direct_winning_move(game, player)
-    if pos is not None:
-        return pos
-
-    return find_highest_value_move(game, player, lambda game: game.used_fields_count(player))
-
-def greedy_bot(game, player) -> int:
-    """
-    Picks the move that results in the highest number of stones.
-    """
-    return find_highest_value_move(game, player, lambda game: game.stone_count(player))
-
-def rand_bot(game, player) -> int:
-    """
-    Playes random moves.
-
-    This bot is usable as a messurment on how good a bot performs.
-    """
-    pos = has_direct_winning_move(game, player)
-    if pos is not None:
-        return pos
-
-    own_state = game.state[player]
-    hasStones = []
-    for pos in game.possible_moves(player):
-        hasStones.append(pos)
-    return random.choice(hasStones)
-
-def high_bot(game, player):
-    """
-    Playes the filed with the highest number of stones.
-    """
-    pos = has_direct_winning_move(game, player)
-    if pos is not None:
-        return pos
-
-    return max(((game.state[player][pos], pos) for pos in game.possible_moves(player)))[1]
-
-def max_in_one_field_bot(game, player):
-    """
-    Tries to coolect as many stones in one field as possible.
-    """
-    pos = has_direct_winning_move(game, player)
-    if pos is not None:
-        return pos
-
-    return find_highest_value_move(game, player, lambda game: game.max_field_count(player))
-
-
-def real_player(game, player):
-    """
-    Give the opportunity to play the game as a real player.
-    """
-    print()
-    print(f"Player {player} turn")
-    game.print_player_perspective(player)
-
-    move = -1
-    while(move==-1):
-        entered_move = input ("Enter move: ")
-
-        if(int(entered_move) in game.possible_moves(player)):
-            move = int(entered_move)
-        else:
-            print("Entered an invalid move")
-
-    print()
-    return move
 
 def trackGames(number_of_games, player1, player2):
     """
@@ -309,6 +194,17 @@ def trackGames(number_of_games, player1, player2):
         game = Game()
         winner[game.play(player1, player2)] += 1
 
-    print(winner)
-random.seed(1)
-trackGames(1000, rand_bot, greedy_bot)
+    return winner
+
+def trackGamesRandStart(number_of_games, player1, player2):
+    winner = [0,0]
+
+    for i in range(number_of_games):
+        game = Game()
+
+        if(random.choice([True, False])):
+            winner[game.play(player1, player2)] += 1
+        else:
+            winner[1-game.play(player2, player1)] += 1
+
+    return winner
