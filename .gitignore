@@ -140,4 +140,5 @@ cython_debug/
 
 # ####
 # genetic_evol_cache
-generations/ 
+generations/
+test.py
